@@ -1,5 +1,5 @@
-npm install
-npm run api
-npm start
+npm install /
+npm run api /
+npm start /
 
 : )
