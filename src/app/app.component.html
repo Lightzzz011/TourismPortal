@@ -1,0 +1,111 @@
+<main class="main">
+  <div
+    class="main__content"
+    [class.main__content--blur]="authMode"
+    [class.main__content--loading]="loaderVisible()"
+  >
+    <app-navbar></app-navbar>
+    <ng-container *ngIf="isHome; else routed">
+      <app-hero></app-hero>
+      <app-destinations-section></app-destinations-section>
+      <section class="about" id="about">
+        <div class="about__image">
+          <img
+            src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80"
+            alt="Team collaboration"
+          />
+        </div>
+        <div class="about__content">
+          <p class="about__eyebrow">About Us</p>
+          <h2>Designing journeys with heart and precision.</h2>
+          <p>We are a small team that plans trips with local guides we trust.</p>
+          <p>We mix famous sights with quiet spots so each trip feels special.</p>
+          <p>We handle the details so you can relax and enjoy the journey.</p>
+        </div>
+      </section>
+
+      <section class="contact" id="contact">
+        <div class="contact__header">
+          <div>
+            <p class="contact__eyebrow">Contact</p>
+            <h2>Let's plan your next escape</h2>
+            <p class="contact__subtitle">
+              Tell us what you are dreaming about and we will respond with ideas.
+            </p>
+          </div>
+          <div class="contact__info">
+            <p><strong>CEO:</strong> Lorem ipsum.</p>
+            <p><strong>Partners:</strong> Lorem ipsum.</p>
+            <p><strong>Support Team:</strong> Lorem ipsum.</p>
+            <div class="contact__socials">
+              <a [href]="socialLinks.instagram" target="_blank" rel="noreferrer" aria-label="Instagram">
+                Instagram
+              </a>
+              <a [href]="socialLinks.twitter" target="_blank" rel="noreferrer" aria-label="Twitter">
+                Twitter
+              </a>
+              <a [href]="socialLinks.linkedin" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                LinkedIn
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact__form" (ngSubmit)="submitContact()">
+          <textarea
+            placeholder="What can we help you with?"
+            [(ngModel)]="contactMessage"
+            name="contactMessage"
+            rows="5"
+          ></textarea>
+          <button type="submit">Send Message</button>
+          <p class="contact__status" *ngIf="contactStatus">
+            {{ contactStatus }}
+          </p>
+        </form>
+      </section>
+    </ng-container>
+    <ng-template #routed>
+      <div class="route-shell" [class.route-shell--loading]="isRouting">
+        <div class="route-anim">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+  <div class="app-toast-container">
+    <div
+      class="app-toast"
+      *ngFor="let toast of toasts()"
+      [class.app-toast--hide]="!toast.visible"
+      [class.app-toast--error]="toast.kind === 'error'"
+    >
+      <span>{{ toast.text }}</span>
+      <button class="app-toast-close" (click)="closeToast(toast.id)">&times;</button>
+    </div>
+  </div>
+
+  <button
+    *ngIf="showScrollTop()"
+    class="scroll-top-button"
+    type="button"
+    aria-label="Scroll to top"
+    (click)="scrollToTop()"
+  >
+    <span aria-hidden="true">↑</span>
+  </button>
+
+  <app-auth-modal
+    *ngIf="authMode"
+    [mode]="authMode"
+    (closed)="closeAuth()"
+    (success)="onAuthSuccess()"
+  ></app-auth-modal>
+
+  <div class="app-loader-overlay" *ngIf="loaderVisible()">
+    <div class="app-loader-card">
+      <div class="app-loader-spinner"></div>
+      <p>Loading, please wait...</p>
+    </div>
+  </div>
+</main>

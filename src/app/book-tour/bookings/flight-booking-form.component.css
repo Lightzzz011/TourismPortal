@@ -1,0 +1,209 @@
+.booking-form {
+  margin: 40px auto;
+  background: rgba(255, 255, 255, 0.168);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  width: 760px;
+  max-width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+
+  animation: focusPop 0.25s ease;
+}
+
+.booking-form.closing {
+  animation: formClose 0.22s ease forwards;
+}
+
+@keyframes formClose {
+  to {
+    transform: translateY(8px) scale(0.96);
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+
+@keyframes focusPop {
+  from {
+    transform: scale(0.98);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.selected-flight {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: skyblue;
+}
+
+.flight-number {
+  font-size: 12px;
+}
+
+.route {
+  font-weight: 600;
+}
+
+.price {
+  font-weight: 700;
+  color: #679ee5;
+}
+
+.traveller-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.traveller-container {
+  display: flex;
+  gap: 6px;
+}
+
+.traveller-card input,
+.traveller-card select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #09143f36;
+  color: #d1d5db;
+  width: 100%;
+}
+
+.traveller-card select option {
+  background-color: #111432ce;
+  color: #679ee5;
+  border: none;
+}
+
+.traveller-card input:focus {
+  border: none;
+}
+
+.payment-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin: 10px 0;
+}
+
+.total {
+  font-size: 1.1rem;
+}
+
+.pay-btn {
+  margin-top: 14px;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.confirmation-overlay {
+  position: absolute; 
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(2px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px; 
+}
+
+.confirmation-box {
+  background: #fefefe;
+  border-radius: 16px;
+  padding: 22px;
+  width: 360px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+  animation: popupIn 0.2s ease;
+  color: #679ee5;
+}
+
+h3 {
+  color: #679ee5;
+}
+
+.preview-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.confirm-btn {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #00c853, #69f0ae);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.confirm-btn:disabled,
+.cancel-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  border-radius: 999px;
+  background: #eceff1;
+  cursor: pointer;
+}
+
+@keyframes popupIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.error {
+  font-size: 12px;
+  color: #ff0400;
+  width: 100%;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.submit-error {
+  margin: 10px 0 4px;
+  font-size: 13px;
+  color: #c62828;
+  font-weight: 600;
+}

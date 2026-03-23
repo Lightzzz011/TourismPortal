@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="hero">
+    <div class="hero__overlay">
+      <div class="hero__content">
+        <h1>Enjoy your Dream Vacation</h1>
+        <p>Book Hotels, Flights and Stay packages at lowest price</p>
+      </div>
+
+      <div class="search-bar">
+        <div class="search-item">
+          <div class="label-wrap" (click)="goToDestinations()">
+            <span class="label label--primary">Destination</span>
+            <span class="label label--secondary">Destination</span>
+          </div>
+        </div>
+        <div class="search-item">
+          <div class="label-wrap">
+            <span class="label label--primary">Travel</span>
+            <span class="label label--secondary">Travel</span>
+          </div>
+        </div>
+        <div class="search-item">
+          <div class="label-wrap">
+            <span class="label label--primary">Hotels</span>
+            <span class="label label--secondary">Hotels</span>
+          </div>
+        </div>
+
+        <button class="search-btn" (click)="showToast()">
+          <span><i class="ri-info-i"></i></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-hotel-booking (bookingSuccess)="showBookingToast()"></app-hotel-booking>

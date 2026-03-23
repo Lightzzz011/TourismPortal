@@ -1,0 +1,284 @@
+<section class="view-all">
+  <header class="view-all__header">
+    <div>
+      <p class="view-all__eyebrow">All Destinations</p>
+      <h1>Every Place We Love Right Now</h1>
+      <p class="view-all__subtitle">
+        Search by name, country, vibe, or tags. Sort and filter to plan faster.
+      </p>
+    </div>
+  </header>
+
+  <div class="view-all__topbar">
+    <div class="view-all__search">
+      <input
+        type="search"
+        placeholder="Search places..."
+        [value]="query()"
+        (input)="updateQuery($any($event.target).value)"
+      />
+    </div>
+
+    <div class="sort-panel" (click)="$event.stopPropagation()">
+      <div class="sort-controls">
+        <button
+          class="sort-button"
+          [class.sort-button--active]="menuOpen()"
+          type="button"
+          (click)="toggleMenu()"
+        >
+          <span>Sort</span>
+          <i class="ri-arrow-down-s-line sort-arrow"></i>
+        </button>
+
+        <button class="sort-clear" type="button" (click)="clearAllFilters(); $event.stopPropagation()">
+          Clear All
+        </button>
+      </div>
+      <div class="sort-menu" [class.sort-menu--open]="menuOpen()">
+        <div class="sort-menu__header">
+          <span>Sort Options</span>
+          <button class="sort-menu__close" type="button" (click)="closeAllMenus()">Close</button>
+        </div>
+        <div
+          class="sort-item"
+          [class.sort-item--active]="activeChild() === 'distance'"
+          (click)="toggleChild('distance')"
+        >
+          <label class="sort-label">
+            <span>Distance</span>
+          </label>
+
+          <div
+            class="sort-child"
+            [class.sort-child--open]="activeChild() === 'distance'"
+            (click)="$event.stopPropagation()"
+          >
+            <div
+              class="sort-option"
+              [class.active]="isDistanceSelected('desc')"
+              (click)="setDistanceMode('desc')"
+            >
+              Longest to Shortest
+            </div>
+
+            <div
+              class="sort-option"
+              [class.active]="isDistanceSelected('asc')"
+              (click)="setDistanceMode('asc')"
+            >
+              Shortest to Longest
+            </div>
+
+            <div
+              class="sort-option"
+              [class.active]="isDistanceSelected('custom')"
+              (click)="isCustomDistanceOpen.set(!isCustomDistanceOpen())"
+            >
+              Custom
+            </div>
+
+            <div class="sort-custom-panel" [class.sort-custom-panel--open]="isCustomDistanceOpen()">
+              <label>
+                Min:
+                <input type="number" #minDistance />
+              </label>
+
+              <label>
+                Max:
+                <input type="number" #maxDistance />
+              </label>
+
+              <button
+                type="button"
+                (click)="
+                  setCustomDistance(
+                    minDistance.value ? +minDistance.value : null,
+                    maxDistance.value ? +maxDistance.value : null
+                  )
+                "
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+
+        
+        <div
+          class="sort-item"
+          [class.sort-item--active]="activeChild() === 'type'"
+          (click)="toggleChild('type')"
+        >
+          <label class="sort-label">
+            <span>Type</span>
+          </label>
+
+          <div
+            class="sort-child"
+            [class.sort-child--open]="activeChild() === 'type'"
+            (click)="$event.stopPropagation()"
+          >
+            <div
+              class="sort-option"
+              [class.active]="isTypeSelected(t)"
+              *ngFor="let t of types()"
+              (click)="setType(t)"
+            >
+              {{ t }}
+            </div>
+          </div>
+        </div>
+
+        
+        <div
+          class="sort-item"
+          [class.sort-item--active]="activeChild() === 'popularity'"
+          (click)="toggleChild('popularity')"
+        >
+          <label class="sort-label">
+            <span>Popularity</span>
+          </label>
+
+            <div
+              class="sort-child"
+              [class.sort-child--open]="activeChild() === 'popularity'"
+              (click)="$event.stopPropagation()"
+            >
+              <div
+                class="sort-option"
+                *ngFor="let popularity of popularityLevels"
+                [class.active]="isPopularitySelected(popularity)"
+                (click)="setPopularity(popularity)"
+              >
+                {{ popularity }}
+              </div>
+            </div>
+          </div>
+
+        
+        <div
+          class="sort-item"
+          [class.sort-item--active]="activeChild() === 'price'"
+          (click)="toggleChild('price')"
+        >
+          <label class="sort-label">
+            <span>Price</span>
+          </label>
+
+          <div
+            class="sort-child sort-child--price"
+            [class.sort-child--open]="activeChild() === 'price'"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="price-slider" #priceSlider>
+              <div class="price-track"></div>
+
+              <div
+                class="price-range"
+                [style.left.%]="priceMinPercent()"
+                [style.right.%]="100 - priceMaxPercent()"
+              ></div>
+
+              <div
+                class="price-tooltip price-tooltip--min"
+                [class.price-tooltip--shift-left]="tooltipOverlap()"
+                [style.left.%]="priceMinPercent()"
+              >
+                ₹{{ priceMin() | number: '1.0-0' }}
+              </div>
+
+              <div
+                class="price-tooltip price-tooltip--max"
+                [class.price-tooltip--shift-right]="tooltipOverlap()"
+                [style.left.%]="priceMaxPercent()"
+              >
+                ₹{{ priceMax() | number: '1.0-0' }}
+              </div>
+
+              <div
+                class="price-thumb price-thumb--min"
+                (pointerdown)="startSliderDrag($event, 'min')"
+                [style.left.%]="priceMinPercent()"
+              ></div>
+
+              <div
+                class="price-thumb price-thumb--max"
+                (pointerdown)="startSliderDrag($event, 'max')"
+                [style.left.%]="priceMaxPercent()"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="applied-sort-bar" *ngIf="appliedSortLabels().length">
+    <span class="applied-sort-bar__label">Applied</span>
+    <div class="applied-sort-bar__chips">
+      <span class="applied-sort-chip" *ngFor="let label of appliedSortLabels()">
+        {{ label }}
+      </span>
+    </div>
+  </div>
+
+  <div class="view-all__grid">
+    <article
+      class="view-all__card"
+      #cardEl
+      [attr.data-place-id]="place.id"
+      *ngFor="let place of visiblePlaces(); trackBy: trackById"
+    >
+      <div class="view-all__image">
+        <img [src]="place.image" [alt]="place.name" />
+      </div>
+
+      <div class="view-all__content">
+        <div class="view-all__meta">
+          <span class="view-all__name">{{ place.name }}</span>
+          <span class="view-all__country">{{ place.country }}</span>
+        </div>
+
+        <div class="view-all__tags">
+          <span class="tag tag--type">{{ place.type }}</span>
+          <span class="tag tag--popularity">{{ place.popularFor }}</span>
+          <span class="tag tag--type">Rs. {{ place.price }} Only</span>
+        </div>
+
+        <p class="view-all__blurb">{{ place.blurb }}</p>
+
+        <div class="view-all__footer">
+          <span class="view-all__distance"> {{ place.distanceKm | number: '1.0-0' }} km away </span>
+
+          <button class="view-all__button" [routerLink]="['/destination', place.id]">
+            Explore
+          </button>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="view-all__load-area" *ngIf="hasMorePlaces()" #loadTrigger>
+    <div
+      class="view-all__load-trigger"
+      [class.view-all__load-trigger--loading]="isBatchLoading()"
+    >
+      <ng-container *ngIf="isBatchLoading(); else loadHint">
+        <span class="view-all__load-spinner" aria-hidden="true"></span>
+        <div class="view-all__load-copy">
+          <p>Loading more destinations...</p>
+          <span>Fetching a few more places for you</span>
+        </div>
+      </ng-container>
+
+      <ng-template #loadHint>
+        <span class="view-all__load-dot" aria-hidden="true"></span>
+        <div class="view-all__load-copy">
+          <p>Scroll to load more destinations</p>
+          <span>More cards will appear automatically</span>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</section>

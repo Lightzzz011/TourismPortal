@@ -1,0 +1,40 @@
+<section class="destinations" id="destinations">
+  <div class="destinations__header">
+    <div>
+      <p class="destinations__eyebrow">Top picks</p>
+      <h2>Destinations That Feel Like a Story</h2>
+      <p class="destinations__subtitle">
+        Curated escapes across continents, cultures, and coastlines.
+      </p>
+    </div>
+    <div class="destinations__actions">
+      <button class="destinations__cta" routerLink="/destinations/all">
+        View All
+      </button>
+      <button class="destinations__ghost" (click)="scrollToContact()">
+        Contact Us
+      </button>
+    </div>
+  </div>
+
+  <div class="destinations__grid">
+    <article class="destinations__card box" *ngFor="let card of cards">
+      <div class="destinations__image">
+        <img [src]="card.image" [alt]="card.name + ', ' + card.country" />
+      </div>
+      <div class="destinations__content">
+        <div class="destinations__meta">
+          <span class="destinations__name">{{ card.name }}</span>
+          <span class="destinations__country">{{ card.country }}</span>
+        </div>
+        <p class="destinations__blurb">{{ card.blurb }}</p>
+        <button
+          class="destinations__button"
+          [routerLink]="['/destination', card.id]"
+        >
+          Explore
+        </button>
+      </div>
+    </article>
+  </div>
+</section>

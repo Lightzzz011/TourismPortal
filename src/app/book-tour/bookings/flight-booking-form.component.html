@@ -1,0 +1,110 @@
+<div class="booking-form" *ngIf="item" [class.closing]="isClosing">
+  <h2 *ngIf="bookingType === 'flight'">Complete Flight Booking</h2>
+  <h2 *ngIf="bookingType === 'bus'">Complete Bus Booking</h2>
+  <h2 *ngIf="bookingType === 'hotel'">Complete Hotel Booking</h2>
+
+  <div class="selected-flight">
+    <ng-container *ngIf="bookingType !== 'hotel'">
+      <strong>{{ item.operator || item.airline }}</strong>
+      <div>{{ item.from }} &rarr; {{ item.to }}</div>
+    </ng-container>
+
+    <ng-container *ngIf="bookingType === 'hotel'">
+      <strong>{{ item.hotelName }}</strong>
+      <div>{{ item.city }}</div>
+    </ng-container>
+  </div>
+
+  <hr />
+
+  <div class="travellers-section">
+    <h3>{{ bookingType === 'hotel' ? 'Guest Details' : 'Traveller Details' }}</h3>
+
+    <div class="traveller-card" *ngFor="let traveller of travellersArray; let i = index">
+      <h4>{{ bookingType === 'hotel' ? 'Guest' : 'Traveller' }} {{ i + 1 }}</h4>
+
+      <div class="traveller-container">
+        <div>
+          <input type="text" [(ngModel)]="traveller.name" placeholder="Full Name" />
+          <div class="error" *ngIf="travellerErrors[i]?.name">{{ travellerErrors[i].name }}</div>
+        </div>
+
+        <div>
+          <input type="number" [(ngModel)]="traveller.age" placeholder="Age" />
+          <div class="error" *ngIf="travellerErrors[i]?.age">{{ travellerErrors[i].age }}</div>
+        </div>
+
+        <div>
+          <select [(ngModel)]="traveller.gender">
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <div class="payment-section">
+    <h3>Payment Method</h3>
+
+    <label>
+      <input type="radio" value="upi" [(ngModel)]="paymentMethod" />
+      UPI
+    </label>
+
+    <label>
+      <input type="radio" value="card" [(ngModel)]="paymentMethod" />
+      Credit / Debit Card
+    </label>
+
+    <label>
+      <input type="radio" value="netbanking" [(ngModel)]="paymentMethod" />
+      Net Banking
+    </label>
+  </div>
+
+  <div class="total">Total Payable: <strong>Rs {{ totalAmount }}</strong></div>
+
+  <button class="pay-btn" (click)="submitBooking()">Pay Rs {{ totalAmount }}</button>
+
+  <div class="confirmation-overlay" *ngIf="showConfirmation">
+    <div class="confirmation-box">
+      <h3>Confirm Your {{ bookingType | titlecase }} Booking</h3>
+
+      <div class="preview-row">
+        <strong>{{ bookingType === 'hotel' ? 'Hotel' : 'Operator' }}:</strong>
+        <span>{{ item.hotelName || item.operator || item.airline }}</span>
+      </div>
+
+      <div class="preview-row" *ngIf="bookingType !== 'hotel'">
+        <strong>Route:</strong>
+        <span>{{ item.from }} &rarr; {{ item.to }}</span>
+      </div>
+
+      <div class="preview-row" *ngIf="bookingType === 'hotel'">
+        <strong>City:</strong>
+        <span>{{ item.city }}</span>
+      </div>
+
+      <div class="preview-row">
+        <strong>{{ bookingType === 'hotel' ? 'Guests' : 'Travellers' }}:</strong>
+        <span>{{ travellers }}</span>
+      </div>
+
+      <div class="preview-row">
+        <strong>Total Amount:</strong>
+        <span>Rs {{ totalAmount }}</span>
+      </div>
+
+      <div class="popup-actions">
+        <button class="confirm-btn" (click)="confirmBooking()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Submitting...' : 'Confirm' }}
+        </button>
+        <button class="cancel-btn" (click)="cancelBooking()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

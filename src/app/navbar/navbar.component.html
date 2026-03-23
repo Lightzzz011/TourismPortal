@@ -1,0 +1,95 @@
+<nav
+  class="navbar"
+  [class.navbar--compact]="isCompact"
+  [class.navbar--reveal]="isReveal"
+  [class.navbar--open]="isCompact && isMenuOpen"
+>
+  <div class="navbar-top">
+    <div class="logo">
+      <a routerLink="/" (click)="goHome($event)">{{ appName }}</a>
+    </div>
+    <button
+      class="nav-menu-button"
+      type="button"
+      aria-label="Open navigation menu"
+      [attr.aria-expanded]="isMenuOpen"
+      (click)="toggleMenu()"
+      *ngIf="isCompact"
+    >
+      <i class="ri-menu-fill"></i>
+    </button>
+
+    <div class="left" *ngIf="!isCompact">
+      <div class="nav-links-wrap" #linksWrap>
+        <ul class="nav-links">
+          <li>
+            <a
+              routerLink="/destinations/all"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              data-link="destinations"
+            >
+              Destinations
+            </a>
+          </li>
+
+          <li>
+            <a
+              routerLink="/book-tour"
+              routerLinkActive="active"
+              data-link="book-tour"
+            >
+              Book a Tour
+            </a>
+          </li>
+        </ul>
+        <span class="nav-underline" aria-hidden="true"></span>
+      </div>
+
+      <div class="buttons">
+        <ng-container *ngIf="user; else authButtons">
+          <a routerLink="/profiles" class="user-pill" aria-label="Open profile page">
+            <span class="user-pill__icon">{{ userInitial }}</span>
+            <span class="user-pill__name">{{ user.name }}</span>
+          </a>
+          <button type="button" class="user-pill__logout" (click)="signOut()">Sign Out</button>
+        </ng-container>
+        <ng-template #authButtons>
+          <a routerLink="/signin" class="btn signin">Sign In</a>
+          <a routerLink="/signup" class="btn signup">Sign Up</a>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="nav-menu" [class.nav-menu--open]="isMenuOpen" *ngIf="isCompact">
+    <a
+      routerLink="/destinations/all"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="closeMenu()"
+    >
+      Destinations
+    </a>
+    <a
+      routerLink="/book-tour"
+      routerLinkActive="active"
+      (click)="closeMenu()"
+    >
+      Book a Tour
+    </a>
+
+    <ng-container *ngIf="user; else authMenu">
+      <a routerLink="/profiles" class="nav-profile" (click)="closeMenu()">
+        <span class="nav-profile__icon">{{ userInitial }}</span>
+        <span>{{ user.name }}</span>
+      </a>
+      <button type="button" class="nav-logout" (click)="signOut()">Sign Out</button>
+    </ng-container>
+    <ng-template #authMenu>
+      <a routerLink="/signin" class="btn signin" (click)="closeMenu()">Sign In</a>
+      <a routerLink="/signup" class="btn signup" (click)="closeMenu()">Sign Up</a>
+    </ng-template>
+  </div>
+</nav>

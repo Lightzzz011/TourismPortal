@@ -1,0 +1,550 @@
+<div class="hotel-search">
+  <div class="ad-panel ad-panel--top">
+    <div class="ad-slider">
+      <div class="ad-slide">
+        <img
+          src="https://plus.unsplash.com/premium_photo-1661281267609-809b82192578?q=80&w=1171&auto=format&fit=crop"
+        />
+        <div class="ad-text">Flat 30% Off on Flights</div>
+      </div>
+
+      <div class="ad-slide">
+        <img
+          src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?q=80&w=1170&auto=format&fit=crop"
+        />
+        <div class="ad-text">Save RS.3,000 on Hotels</div>
+      </div>
+
+      <div class="ad-slide">
+        <img
+          src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1676&q=80"
+        />
+        <div class="ad-text">Extra Cashback with Cards</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hotel-search__tabs">
+    <button class="tab" [class.active]="activeTab === 'flight'" (click)="switchTab('flight')">
+      Flight
+    </button>
+
+    <button class="tab" [class.active]="activeTab === 'bus'" (click)="switchTab('bus')">Bus</button>
+
+    <button class="tab" [class.active]="activeTab === 'hotel'" (click)="switchTab('hotel')">
+      Hotels
+    </button>
+  </div>
+
+  <div class="booking-layout">
+    
+    <div class="hotel-search__card">
+      
+      <ng-container *ngIf="activeTab === 'flight'">
+        
+        <div class="trip-types">
+          <label>
+            <input
+              type="radio"
+              name="trip"
+              value="round"
+              [(ngModel)]="tripType"
+              (change)="setTrip('round')"
+            />
+            Round Trip
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="trip"
+              value="oneway"
+              [(ngModel)]="tripType"
+              (change)="setTrip('oneway')"
+            />
+            One way
+          </label>
+        </div>
+
+        
+        <div class="field">
+          <div class="input-with-icon">
+            <span class="icon">📍</span>
+            <input type="text" placeholder="From" [(ngModel)]="searchFrom" />
+            <div class="error" *ngIf="errors.from">
+              {{ errors.from }}
+            </div>
+          </div>
+
+          <div class="input-with-icon">
+            <span class="icon">📍</span>
+            <input type="text" placeholder="To" [(ngModel)]="searchTo" />
+            <div class="error" *ngIf="errors.to">
+              {{ errors.to }}
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="row">
+          
+          <div class="outlined-field">
+            <span class="outlined-label">DEPART DATE</span>
+
+            <div class="input-with-icon">
+              <input type="date" [(ngModel)]="flightData.departDate" [min]="today" />
+              <div class="error" *ngIf="errors.departDate">
+                {{ errors.departDate }}
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="outlined-field">
+            <span class="outlined-label">RETURN DATE</span>
+
+            <div class="input-with-icon" [class.disabled]="tripType === 'oneway'">
+              <input
+                type="date"
+                [(ngModel)]="flightData.returnDate"
+                [disabled]="tripType === 'oneway'"
+                [min]="flightData.departDate || today"
+              />
+              <div class="error" *ngIf="errors.returnDate">
+                {{ errors.returnDate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="outlined-field">
+          <span class="outlined-label">TRAVELLERS & CABIN</span>
+
+          <div class="input-with-icon clickable" (click)="toggleTravellerPanel()">
+            <span class="icon">👤</span>
+
+            <span class="value">
+              {{ totalTravellers }} Traveller{{ totalTravellers > 1 ? 's' : '' }},
+              {{ flightData.cabinClass }}
+            </span>
+
+            <span class="arrow">▾</span>
+          </div>
+
+          
+          <div class="traveller-panel" *ngIf="showTravellers">
+            <div class="counter-row">
+              <span>Adult</span>
+              <div class="controls">
+                <button (click)="decrease('adult')">−</button>
+                <span>{{ flightData.adults }}</span>
+                <button (click)="increase('adult')">+</button>
+              </div>
+            </div>
+
+            <div class="counter-row">
+              <span>Child</span>
+              <div class="controls">
+                <button (click)="decrease('child')">−</button>
+                <span>{{ flightData.children }}</span>
+                <button (click)="increase('child')">+</button>
+              </div>
+            </div>
+
+            <div class="counter-row">
+              <span>Infant</span>
+              <div class="controls">
+                <button (click)="decrease('infant')">−</button>
+                <span>{{ flightData.infants }}</span>
+                <button (click)="increase('infant')">+</button>
+              </div>
+            </div>
+
+            <div class="class-row">
+              <span>Class</span>
+              <select [(ngModel)]="flightData.cabinClass">
+                <option>Economy</option>
+                <option>Premium Economy</option>
+                <option>Business</option>
+                <option>First Class</option>
+              </select>
+            </div>
+
+            <button class="done-btn" (click)="toggleTravellerPanel()">Done</button>
+          </div>
+        </div>
+
+        
+        <button class="search-btn" (click)="search()">
+          {{ searchButtonLabel }}
+        </button>
+      </ng-container>
+      
+      <ng-container *ngIf="activeTab === 'bus'">
+        
+        <div class="trip-types">
+          <label>
+            <input
+              type="radio"
+              name="trip"
+              value="round"
+              [(ngModel)]="tripType"
+              (change)="setTrip('round')"
+            />
+            Round Trip
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="trip"
+              value="oneway"
+              [(ngModel)]="tripType"
+              (change)="setTrip('oneway')"
+            />
+            One way
+          </label>
+        </div>
+
+        
+        <div class="field">
+          <div class="input-with-icon">
+            <span class="icon">📍</span>
+
+            
+            <input type="text" [(ngModel)]="busData.from" placeholder="From City" />
+            <div class="error" *ngIf="errors.from">
+              {{ errors.from }}
+            </div>
+          </div>
+
+          <div class="input-with-icon">
+            <span class="icon">📍</span>
+
+            
+            <input type="text" [(ngModel)]="busData.to" placeholder="To City" />
+            <div class="error" *ngIf="errors.to">
+              {{ errors.to }}
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="row">
+          
+          <div class="outlined-field">
+            <span class="outlined-label">{{ departLabel | uppercase }}</span>
+            <div class="input-with-icon">
+              
+              <input type="date" [(ngModel)]="busData.departDate" [min]="today" />
+              <div class="error" *ngIf="errors.departDate">
+                {{ errors.departDate }}
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="outlined-field">
+            <span class="outlined-label">{{ returnLabel | uppercase }}</span>
+            <div class="input-with-icon" [class.disabled]="tripType === 'oneway'">
+              
+              <input
+                type="date"
+                [(ngModel)]="busData.returnDate"
+                [disabled]="tripType === 'oneway'"
+                [min]="busData.departDate || today"
+              />
+              <div class="error" *ngIf="errors.returnDate">
+                {{ errors.returnDate }}
+              </div>
+            </div>
+
+            
+          </div>
+        </div>
+
+        
+        <div class="outlined-field">
+          <span class="outlined-label">TRAVELLERS COUNT</span>
+
+          <div class="input-with-icon clickable">
+            
+            <input type="number" [(ngModel)]="busData.passengers" class="value" min="1" />
+          </div>
+        </div>
+
+        <button class="search-btn" (click)="search()">Search Buses</button>
+      </ng-container>
+
+      
+      <ng-container *ngIf="activeTab === 'hotel'">
+        
+        <div class="outlined-field">
+          <span class="outlined-label">CITY</span>
+
+          <div class="input-with-icon">
+            <span class="icon">📍</span>
+
+            
+            <input type="text" [(ngModel)]="hotelData.city" placeholder="Enter destination" />
+          </div>
+
+          <div class="error" *ngIf="errors.city">
+            {{ errors.city }}
+          </div>
+        </div>
+
+        
+        <div class="row">
+          
+          <div class="outlined-field">
+            <span class="outlined-label">CHECK-IN</span>
+
+            <div class="input-with-icon">
+              <input type="date" [(ngModel)]="hotelData.checkIn" [min]="today" />
+              <div class="error" *ngIf="errors.checkIn">
+                {{ errors.checkIn }}
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="outlined-field">
+            <span class="outlined-label">CHECK-OUT</span>
+
+            <div class="input-with-icon">
+              <input
+                type="date"
+                [(ngModel)]="hotelData.checkOut"
+                [min]="hotelData.checkIn || today"
+              />
+              <div class="error" *ngIf="errors.checkOut">
+                {{ errors.checkOut }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="outlined-field">
+          <span class="outlined-label">ID PROOF</span>
+
+          <label class="file-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              (change)="onFileSelected($event)"
+              hidden
+            />
+
+            <span class="upload-btn">Upload ID Proof</span>
+
+            <span class="file-name" *ngIf="selectedFileName">
+              {{ selectedFileName }}
+            </span>
+          </label>
+
+          <div class="error" *ngIf="errors.idProof">
+            {{ errors.idProof }}
+          </div>
+        </div>
+
+        
+        <div class="outlined-field">
+          <span class="outlined-label">ROOMS & GUESTS</span>
+
+          <div class="input-with-icon clickable" (click)="toggleTravellerPanel()">
+            <span class="value"> {{ totalHotelGuests }} Guests, {{ hotelData.roomType }} </span>
+            <span class="arrow">▾</span>
+          </div>
+
+          <div class="traveller-panel" *ngIf="showTravellers">
+            <div class="panel-header">
+              <span></span>
+              <button class="close" (click)="toggleTravellerPanel(); $event.stopPropagation()">
+                ✕
+              </button>
+            </div>
+
+            <div class="counter-row">
+              <span>Adult</span>
+              <div class="controls">
+                <button (click)="decrease('adult')">−</button>
+                <span>{{ hotelData.adults }}</span>
+                <button (click)="increase('adult')">+</button>
+              </div>
+            </div>
+
+            <div class="counter-row">
+              <span>Child</span>
+              <div class="controls">
+                <button (click)="decrease('child')">−</button>
+                <span>{{ hotelData.children }}</span>
+                <button (click)="increase('child')">+</button>
+              </div>
+            </div>
+
+            <div class="class-row">
+              <span>Rooms</span>
+              <select [(ngModel)]="hotelData.roomType">
+                <option>AC</option>
+                <option>Non-AC</option>
+                <option>Second Class</option>
+                <option>First Class</option>
+              </select>
+            </div>
+
+            <button class="done-btn" (click)="toggleTravellerPanel()">Done</button>
+          </div>
+        </div>
+
+        <button class="search-btn" (click)="search()">Search Hotels</button>
+      </ng-container>
+    </div>
+
+    
+    <div class="ad-panel ad-panel--side">
+      <div class="ad-slider">
+        <div class="ad-slide">
+          <img
+            src="https://plus.unsplash.com/premium_photo-1661281267609-809b82192578?q=80&w=1171&auto=format&fit=crop"
+          />
+          <div class="ad-text">Flat 30% Off on Flights</div>
+        </div>
+
+        <div class="ad-slide">
+          <img
+            src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?q=80&w=1170&auto=format&fit=crop"
+          />
+          <div class="ad-text">Save ₹3,000 on Hotels</div>
+        </div>
+
+        <div class="ad-slide">
+          <img
+            src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1676&q=80"
+          />
+          <div class="ad-text">Extra Cashback with Cards</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Searching flights...</span>
+  </div>
+  
+  <div #flightResults class="results" *ngIf="showResults && activeTab === 'flight'">
+    <h2>{{ filteredFlights.length }} Flights Available</h2>
+
+    <div class="flight-card" *ngFor="let flight of filteredFlights">
+      
+      <div class="flight-card__left">
+        <div class="airline">{{ flight.airline }}</div>
+        <div class="flight-number">{{ flight.flightNo }}</div>
+      </div>
+
+      
+      <div class="flight-card__middle">
+        <div class="route">
+          <span class="from">{{ flight.from }}</span>
+          <span class="arrow">→</span>
+          <span class="to">{{ flight.to }}</span>
+        </div>
+
+        <div class="timing">
+          <span>{{ flight.departure }}</span>
+          <span>{{ flight.duration }}</span>
+          <span>{{ flight.arrival }}</span>
+        </div>
+      </div>
+
+      
+      <div class="flight-card__right">
+        <div class="price">₹{{ flight.price }}</div>
+
+        <div class="travellers">
+          {{ totalTravellers }} Traveller{{ totalTravellers > 1 ? 's' : '' }}
+          <button class="select-btn" (click)="openBookingForm(flight)">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div #busResults class="results" *ngIf="showResults && activeTab === 'bus'">
+    <h2>Buses Available</h2>
+
+    <div class="flight-card" *ngFor="let bus of filteredBuses">
+      <div class="flight-card__left">
+        <div class="airline">{{ bus.operator }}</div>
+        <div class="flight-number">{{ bus.busType }}</div>
+      </div>
+
+      <div class="flight-card__middle">
+        <div class="route">
+          <span>{{ bus.from }}</span>
+          <span class="arrow">→</span>
+          <span>{{ bus.to }}</span>
+        </div>
+
+        <div class="timing">
+          <span>{{ bus.departure }}</span>
+          <span>{{ bus.duration }}</span>
+          <span>{{ bus.arrival }}</span>
+        </div>
+      </div>
+
+      <div class="flight-card__right">
+        <div class="price">₹{{ bus.price }}</div>
+        <button class="select-btn" (click)="openBusBooking(bus)">Book Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div #hotelResults class="results" *ngIf="showResults && activeTab === 'hotel'">
+    <h2>Hotels Available</h2>
+
+    <div class="flight-card" *ngFor="let hotel of filteredHotels">
+      <div class="flight-card__left">
+        <div class="airline">{{ hotel.name }}</div>
+        <div class="flight-number">{{ hotel.location }}</div>
+      </div>
+
+      <div class="flight-card__middle">
+        <div class="route">
+          <span>{{ hotel.roomType }}</span>
+        </div>
+
+        <div class="timing">
+          <span>Check-In: {{ hotel.checkIn }}</span>
+          <span>Check-Out: {{ hotel.checkOut }}</span>
+        </div>
+      </div>
+
+      <div class="flight-card__right">
+        <div class="price">₹{{ hotel.price }}</div>
+        <button class="select-btn" (click)="openHotelBooking(hotel)">Reserve</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="booking-form-wrapper" *ngIf="showBookingForm" #bookingFormRef>
+    <app-flight-booking-form
+      [bookingType]="activeTab"
+      [item]="selectedItem"
+      [travellers]="
+        activeTab === 'flight'
+          ? totalTravellers
+          : activeTab === 'bus'
+            ? busData.passengers
+            : hotelData.guests
+      "
+      (bookingFinished)="handleBookingClosed($event)"
+    >
+    </app-flight-booking-form>
+  </div>
+  <div class="no-results" *ngIf="noResults">
+    No {{ activeTab }} results found for selected criteria.
+  </div>
+</div>
+<div class="success-poster" *ngIf="showGlobalPoster">✅ Booking Confirmed</div>

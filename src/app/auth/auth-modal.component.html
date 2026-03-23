@@ -1,0 +1,205 @@
+<div class="auth-modal">
+  <div class="auth-modal__panel" [class.auth-modal__panel--closing]="closing()">
+    <button class="auth-modal__close" type="button" (click)="close()">&times;</button>
+    <h2>
+      {{
+        isForgotPassword
+          ? 'Reset Password'
+          : mode === 'signin'
+            ? 'Welcome Back'
+            : 'Create Your Account'
+      }}
+    </h2>
+    <p class="auth-modal__subtitle">
+      {{
+        isForgotPassword
+          ? 'Set a new password and sign back in.'
+          : mode === 'signin'
+            ? 'Sign in to keep planning your next escape.'
+            : 'Join the crew to save trips and unlock exclusive tours.'
+      }}
+    </p>
+
+    <form (ngSubmit)="submit()">
+      <div class="auth-modal__fields">
+        <div class="auth-modal__row" *ngIf="mode === 'signup' && !isForgotPassword">
+          <div>
+            <label>Name</label>
+            <input
+              [(ngModel)]="name"
+              name="name"
+              type="text"
+              required
+              (focus)="setFocused('name')"
+              (blur)="clearFocused()"
+            />
+            <p class="field-error" *ngIf="nameError && focusedField !== 'name'">
+              {{ nameError }}
+            </p>
+          </div>
+          <div>
+            <label>Mobile(optional)</label>
+            <input
+              [(ngModel)]="phone"
+              name="phone"
+              type="tel"
+              (focus)="setFocused('phone')"
+              (blur)="clearFocused()"
+            />
+            <p class="field-error" *ngIf="phoneError && focusedField !== 'phone'">
+              {{ phoneError }}
+            </p>
+          </div>
+        </div>
+        <label>Email</label>
+        <input
+          [(ngModel)]="email"
+          name="email"
+          type="email"
+          required
+          [readonly]="otpRequested && mode === 'signup' && !isForgotPassword"
+          (ngModelChange)="onEmailChanged()"
+          (focus)="setFocused('email')"
+          (blur)="clearFocused()"
+        />
+        <p class="field-error" *ngIf="emailError && focusedField !== 'email'">
+          {{ emailError }}
+        </p>
+        <label>{{ isForgotPassword ? 'New Password' : 'Password' }}</label>
+        <input
+          [(ngModel)]="password"
+          name="password"
+          type="password"
+          required
+          (focus)="setFocused('password')"
+          (blur)="clearFocused()"
+        />
+        <p class="field-error" *ngIf="passwordError && focusedField !== 'password'">
+          {{ passwordError }}
+        </p>
+
+        <ng-container *ngIf="isForgotPassword">
+          <label>Confirm Password</label>
+          <input
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            required
+            (focus)="setFocused('confirmPassword')"
+            (blur)="clearFocused()"
+          />
+          <p class="field-error" *ngIf="confirmPasswordError && focusedField !== 'confirmPassword'">
+            {{ confirmPasswordError }}
+          </p>
+        </ng-container>
+
+        <ng-container *ngIf="mode === 'signup' && otpRequested && !isForgotPassword">
+          <div class="auth-modal__otp-head">
+            <label>Email OTP</label>
+            <button class="auth-modal__link-btn" type="button" (click)="sendOtp()">Resend OTP</button>
+          </div>
+          <input
+            [(ngModel)]="otpCode"
+            name="otpCode"
+            type="text"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="Enter 6-digit OTP"
+            (focus)="setFocused('otpCode')"
+            (blur)="clearFocused()"
+          />
+          <p class="field-error" *ngIf="otpError && focusedField !== 'otpCode'">
+            {{ otpError }}
+          </p>
+          <div class="auth-modal__otp-note" *ngIf="otpStatusMessage || otpPreview">
+            <p *ngIf="otpStatusMessage">{{ otpStatusMessage }}</p>
+            <p *ngIf="otpPreview">
+              Demo OTP: <strong>{{ otpPreview }}</strong>
+            </p>
+          </div>
+        </ng-container>
+      </div>
+
+      <p class="auth-modal__error" *ngIf="formError()">{{ formError() }}</p>
+
+      <div class="auth-modal__actions">
+        <button class="auth-modal__submit" type="submit" [disabled]="isSendingOtp">
+          {{
+            isForgotPassword
+              ? 'Reset Password'
+              : mode === 'signin'
+                ? 'Sign In'
+                : otpRequested
+                  ? 'Verify OTP & Sign Up'
+                  : isSendingOtp
+                    ? 'Sending OTP...'
+                    : 'Send OTP'
+          }}
+        </button>
+      </div>
+
+      <div class="auth-modal__links" *ngIf="mode === 'signin'">
+        <button
+          class="auth-modal__link-btn"
+          type="button"
+          *ngIf="!isForgotPassword"
+          (click)="openForgotPassword()"
+        >
+          Forgot password?
+        </button>
+        <button
+          class="auth-modal__link-btn"
+          type="button"
+          *ngIf="isForgotPassword"
+          (click)="cancelForgotPassword()"
+        >
+          Back to sign in
+        </button>
+      </div>
+
+      <div class="auth-modal__switch" *ngIf="!isForgotPassword">
+        <span *ngIf="mode === 'signin'">Not registered?</span>
+        <span *ngIf="mode === 'signup'">Already registered?</span>
+        <button
+          class="auth-modal__link-btn"
+          type="button"
+          *ngIf="mode === 'signin'"
+          (click)="switchMode('signup')"
+        >
+          Register
+        </button>
+        <button
+          class="auth-modal__link-btn"
+          type="button"
+          *ngIf="mode === 'signup'"
+          (click)="switchMode('signin')"
+        >
+          Login
+        </button>
+      </div>
+    </form>
+
+    <div class="auth-modal__divider">
+      <span>or continue with</span>
+    </div>
+
+    <p class="auth-modal__social-note">
+      Social buttons work in local demo mode here. Real Google/Facebook OAuth needs provider keys and a backend callback.
+    </p>
+
+    <div class="auth-modal__social">
+      <button type="button" (click)="continueWithProvider('google')">
+        <span class="icon">G</span>
+        Google
+      </button>
+      <button type="button" (click)="continueWithProvider('facebook')">
+        <span class="icon">f</span>
+        Facebook
+      </button>
+      <button type="button" (click)="continueWithProvider('apple')">
+        <span class="icon">A</span>
+        Apple
+      </button>
+    </div>
+  </div>
+</div>

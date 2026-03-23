@@ -1,0 +1,65 @@
+<section class="detail" *ngIf="place() as selected">
+  <div class="detail__hero">
+    <div class="detail__slider">
+      <img [src]="currentSlide" [alt]="selected.name + ' highlight'" class="detail__slide" />
+      <div class="detail__controls">
+        <button type="button" (click)="prevSlide()">Prev</button>
+        <button type="button" (click)="nextSlide()">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail__header">
+    <div>
+      <p class="detail__eyebrow">Destination</p>
+      <h1>{{ selected.name }}</h1>
+      <p class="detail__subtitle">{{ selected.blurb }}</p>
+    </div>
+    <button class="detail__ticket" [routerLink]="['/book-tour', place()?.id]">Tickets</button>
+  </div>
+
+  <div class="detail__links">
+    <div class="detail__location">
+      <p>
+        Your location: <strong>{{ locationLabel() || 'Not set' }}</strong>
+      </p>
+      <button class="detail__location-btn" (click)="openLocationPrompt()">Update Location</button>
+    </div>
+    <div class="detail__cta-links">
+      <a *ngIf="directionsLink" [href]="directionsLink" target="_blank">
+        <span class="icon">Dir</span>
+        Directions
+      </a>
+      <a *ngIf="placeLink" [href]="placeLink" target="_blank">
+        <span class="icon">Map</span>
+        View on Map
+      </a>
+    </div>
+  </div>
+
+  <div class="detail__info">
+    <h2>Know Before You Go</h2>
+    <div class="detail__details">
+      <details *ngFor="let item of selected.info">
+        <summary>{{ item.title }}</summary>
+        <p>{{ item.content }}</p>
+      </details>
+    </div>
+  </div>
+
+  <div class="detail__back">
+    <a routerLink="/destinations/all">Back to all destinations</a>
+  </div>
+</section>
+
+<div class="location-modal" *ngIf="isLocationPromptOpen()">
+  <div class="location-modal__panel">
+    <h3>Share Your Location</h3>
+    <p>Tell us where you are so we can generate the best route to this destination.</p>
+    <input #locInput type="text" placeholder="City or address" />
+    <div class="location-modal__actions">
+      <button type="button" (click)="saveLocation(locInput.value)">Save</button>
+      <button type="button" class="ghost" (click)="closeLocationPrompt()">Maybe later</button>
+    </div>
+  </div>
+</div>

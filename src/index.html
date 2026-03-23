@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Marcellus&family=Sora:wght@300;400;600;700&display=swap"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <title>TravleX</title>
+  </head>
+  <body>
+    <app-root></app-root>
+    <div class="cursor"></div>
+    <div class="particles"></div>
+
+    <script>
+      const cursor = document.querySelector('.cursor');
+      const isSmallScreen = window.matchMedia('(max-width: 768px)').matches;
+      const allowCursorEffect = Boolean(cursor) && !isSmallScreen;
+
+      if (!allowCursorEffect && cursor) {
+        cursor.style.display = 'none';
+      }
+
+      if (allowCursorEffect) {
+        document.addEventListener('mousemove', (e) => {
+          const { clientX: x, clientY: y } = e;
+
+          cursor.style.left = x + 'px';
+          cursor.style.top = y + 'px';
+
+          createParticle(x, y);
+        });
+      }
+
+      function createParticle(x, y) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+
+        const size = Math.random() * 4 + 4;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+
+        document.body.appendChild(particle);
+
+        setTimeout(() => {
+          particle.remove();
+        }, 1000);
+      }
+
+      function createScrollParticles(delta) {
+        const burstCount = Math.min(8, Math.max(2, Math.floor(delta / 18)));
+        const x = window.innerWidth - 36;
+        const y = 96;
+
+        for (let i = 0; i < burstCount; i++) {
+          const jitterX = x + (Math.random() - 0.5) * 28;
+          const jitterY = y + Math.random() * 44;
+          createParticle(jitterX, jitterY);
+        }
+      }
+
+      let lastScrollY = window.scrollY;
+
+      if (allowCursorEffect) {
+        window.addEventListener('scroll', () => {
+          const currentScrollY = window.scrollY;
+
+          const delta = Math.abs(currentScrollY - lastScrollY);
+
+          if (delta > 5) {
+            createScrollParticles(delta);
+          }
+
+          lastScrollY = currentScrollY;
+        });
+      }
+    </script>
+  </body>
+</html>

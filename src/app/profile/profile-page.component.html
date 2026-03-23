@@ -1,0 +1,316 @@
+<section class="profile-page">
+  <div class="dashboard-shell">
+    <div class="dashboard-topbar">
+      <div>
+        <p class="header-eyebrow">{{ isAdmin ? 'Admin Workspace' : 'Traveller Dashboard' }}</p>
+        <h1 class="dashboard-switch-title">Hello, {{ name || 'Explorer' }}.</h1>
+        <p class="header-subtitle">
+          {{ isAdmin ? 'Admin access detected for the logged-in account.' : 'Welcome back. Your next adventure is waiting.' }}
+        </p>
+      </div>
+    </div>
+
+    <ng-container *ngIf="!isAdmin; else adminDashboard">
+      <div class="dashboard-main">
+        <header class="dashboard-header">
+          <div>
+            <p class="header-eyebrow">User Dashboard</p>
+            <h1>Your travel dashboard</h1>
+            <p class="header-subtitle">This is the current dashboard view for the traveller.</p>
+          </div>
+          <label class="search-box" aria-label="Search trips">
+            <input type="text" placeholder="Search destinations" />
+          </label>
+        </header>
+
+        <article class="panel my-trips-panel">
+          <div class="panel-head">
+            <h2>Upcoming Trips</h2>
+            <a routerLink="/destinations/all">View all</a>
+          </div>
+          <div class="trip-grid" *ngIf="upcomingTrips.length; else noUpcomingTrips">
+            <article class="trip-card" *ngFor="let trip of upcomingTrips">
+              <img [src]="trip.image" [alt]="trip.title" />
+              <div class="trip-copy">
+                <h3>{{ trip.title }}</h3>
+                <p>{{ trip.location }}</p>
+                <div class="trip-meta">
+                  <span>{{ trip.duration }}</span>
+                  <span>{{ trip.rating }}</span>
+                </div>
+              </div>
+            </article>
+          </div>
+          <ng-template #noUpcomingTrips>
+            <div class="empty-upcoming">
+              <h3>No trips booked yet</h3>
+              <p>Start planning your next adventure. Your upcoming trips will appear here once booked.</p>
+              <a routerLink="/book-tour">Book a trip</a>
+            </div>
+          </ng-template>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>My Trips</h2>
+          </div>
+          <div class="my-trip-list" *ngIf="myTrips.length; else noVisitedTrips">
+            <div class="my-trip-item" *ngFor="let item of myTrips">
+              <img [src]="item.image" [alt]="item.destination" />
+              <div>
+                <small>{{ item.status }}</small>
+                <p>{{ item.destination }}</p>
+                <span>{{ item.location }}</span>
+              </div>
+            </div>
+          </div>
+          <ng-template #noVisitedTrips>
+            <div class="empty-my-trips">
+              <h3>No completed trips yet</h3>
+              <p>Once you complete and visit booked places, they will appear here.</p>
+              <a routerLink="/destinations/all">Explore trips</a>
+            </div>
+          </ng-template>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Popular Resorts</h2>
+          </div>
+          <div class="resort-list">
+            <article class="resort-item" *ngFor="let resort of popularResorts">
+              <img [src]="resort.image" [alt]="resort.name" />
+              <div>
+                <h3>{{ resort.name }}</h3>
+                <p>{{ resort.location }}</p>
+                <strong>{{ resort.price }}</strong>
+              </div>
+            </article>
+          </div>
+        </article>
+      </div>
+
+      <aside class="dashboard-side">
+        <article class="side-card analytics-side-card">
+          <div class="panel-head panel-head--tight">
+            <h2>{{ currentMonthLabel }}</h2>
+          </div>
+          <div class="calendar-days">
+            <span *ngFor="let day of weekLabels">{{ day }}</span>
+          </div>
+          <div class="calendar-grid">
+            <span
+              *ngFor="let date of calendarDays"
+              [class.is-empty]="!date.day"
+              [class.is-today]="date.isToday"
+            >
+              {{ date.day || '' }}
+            </span>
+          </div>
+        </article>
+
+        <article class="side-card">
+          <div class="panel-head">
+            <h2>Booking Status Analytics Module</h2>
+          </div>
+          <p class="analytics-subtitle">Destination popularity insights</p>
+
+          <div class="analytics-card-row" *ngIf="totalBookings; else noAnalytics">
+            <article class="analytics-mini-card" *ngFor="let card of analyticsStatusCards">
+              <p class="analytics-mini-label">{{ card.label }}</p>
+              <h3>{{ card.count }}</h3>
+              <div class="analytics-mini-track">
+                <span
+                  [ngClass]="'analytics-mini-fill--' + card.tone"
+                  [style.width.%]="barWidth(card.percentage)"
+                ></span>
+              </div>
+              <small>{{ card.percentage | number: '1.0-1' }}%</small>
+            </article>
+          </div>
+
+          <article class="analytics-list-card" *ngIf="totalBookings">
+            <h3>Most Booked Locations</h3>
+            <div class="analytics-list" *ngIf="mostBookedLocations.length">
+              <div class="analytics-list-item" *ngFor="let item of mostBookedLocations">
+                <div class="analytics-list-head">
+                  <p>{{ item.placeName }}</p>
+                  <span>{{ item.bookings }} bookings</span>
+                </div>
+                <div class="analytics-mini-track">
+                  <span class="analytics-mini-fill--booked" [style.width.%]="barWidth(item.popularityPct)"></span>
+                </div>
+                <small>{{ item.popularityPct | number: '1.0-1' }}%</small>
+              </div>
+            </div>
+          </article>
+
+          <ng-template #noAnalytics>
+            <div class="empty-upcoming">
+              <h3>No analytics data yet</h3>
+              <p>Complete some bookings to populate the analytics board.</p>
+              <a routerLink="/book-tour">Book a trip</a>
+            </div>
+          </ng-template>
+        </article>
+      </aside>
+    </ng-container>
+
+    <ng-template #adminDashboard>
+      <div class="dashboard-main admin-main">
+        <header class="dashboard-header">
+          <div>
+            <p class="header-eyebrow">Admin Dashboard</p>
+            <h1>Revenue and operations board</h1>
+            <p class="header-subtitle">Today&apos;s task and revenue summaries are shown here.</p>
+          </div>
+          <div class="admin-date-chip">{{ todayLabel }}</div>
+        </header>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Revenue Overview</h2>
+          </div>
+          <div class="admin-summary-grid">
+            <article class="admin-summary-card" *ngFor="let card of revenueCards">
+              <p class="analytics-mini-label">{{ card.label }}</p>
+              <h3>{{ card.value }}</h3>
+              <small>{{ card.hint }}</small>
+            </article>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Revenue Per Destination</h2>
+          </div>
+          <div class="analytics-list" *ngIf="revenueByDestination.length; else noRevenueData">
+            <div class="analytics-list-item" *ngFor="let destination of revenueByDestination">
+              <div class="analytics-list-head">
+                <p>{{ destination.placeName }}</p>
+                <span>{{ destination.bookings }} bookings</span>
+              </div>
+              <strong class="admin-revenue-value">{{ destination.revenue | currency: 'INR':'symbol':'1.0-0' }}</strong>
+              <div class="analytics-mini-track">
+                <span class="analytics-mini-fill--neutral" [style.width.%]="revenueWidth(destination.revenue)"></span>
+              </div>
+              <small>{{ destination.sharePct | number: '1.0-1' }}% of total revenue</small>
+            </div>
+          </div>
+          <ng-template #noRevenueData>
+            <div class="empty-upcoming">
+              <h3>No revenue data yet</h3>
+              <p>Complete a booking to start tracking destination-wise revenue.</p>
+              <a routerLink="/book-tour">Book a trip</a>
+            </div>
+          </ng-template>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Monthly Revenue Summary</h2>
+          </div>
+          <div class="monthly-revenue-grid" *ngIf="monthlyRevenueSummary.length; else noMonthlyRevenue">
+            <article class="monthly-revenue-card" *ngFor="let month of monthlyRevenueSummary">
+              <p>{{ month.label }}</p>
+              <h3>{{ month.revenue | currency: 'INR':'symbol':'1.0-0' }}</h3>
+              <span>{{ month.bookings }} bookings</span>
+            </article>
+          </div>
+          <ng-template #noMonthlyRevenue>
+            <div class="empty-upcoming">
+              <h3>No monthly summary available</h3>
+              <p>Monthly revenue will appear here after bookings are saved.</p>
+              <a routerLink="/book-tour">Create booking data</a>
+            </div>
+          </ng-template>
+        </article>
+      </div>
+
+      <aside class="dashboard-side">
+        <article class="side-card">
+          <div class="panel-head">
+            <h2>Today&apos;s Task</h2>
+          </div>
+          <div class="admin-task-list">
+            <article class="admin-task-card" *ngFor="let task of todayAdminTasks">
+              <div class="admin-task-head">
+                <h3>{{ task.title }}</h3>
+                <span>{{ task.status }}</span>
+              </div>
+              <p>{{ task.detail }}</p>
+            </article>
+          </div>
+        </article>
+
+        <article class="side-card analytics-side-card">
+          <div class="panel-head panel-head--tight">
+            <h2>{{ currentMonthLabel }}</h2>
+          </div>
+          <div class="calendar-days">
+            <span *ngFor="let day of weekLabels">{{ day }}</span>
+          </div>
+          <div class="calendar-grid">
+            <span
+              *ngFor="let date of calendarDays"
+              [class.is-empty]="!date.day"
+              [class.is-today]="date.isToday"
+            >
+              {{ date.day || '' }}
+            </span>
+          </div>
+        </article>
+
+        <article class="side-card">
+          <div class="panel-head">
+            <h2>Revenue Health</h2>
+          </div>
+          <p class="analytics-subtitle">Quick admin snapshot based on saved bookings</p>
+          <div class="analytics-card-row">
+            <article class="analytics-mini-card">
+              <p class="analytics-mini-label">Total Bookings</p>
+              <h3>{{ totalBookings }}</h3>
+              <small>Current booking records</small>
+            </article>
+            <article class="analytics-mini-card">
+              <p class="analytics-mini-label">Top Destination</p>
+              <h3>{{ revenueByDestination[0]?.placeName || 'N/A' }}</h3>
+              <small>{{ revenueByDestination[0]?.revenue | currency: 'INR':'symbol':'1.0-0' }}</small>
+            </article>
+          </div>
+        </article>
+      </aside>
+    </ng-template>
+
+    <article class="panel dashboard-profile-full">
+      <div class="profile-head">
+        <div class="profile-avatar">{{ avatarInitial }}</div>
+        <div>
+          <p class="profile-eyebrow">Account</p>
+          <h2>Profile Details</h2>
+        </div>
+      </div>
+      <form class="profile-form" (ngSubmit)="saveProfile()">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" [(ngModel)]="name" />
+        <p class="profile-error" *ngIf="nameError">{{ nameError }}</p>
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" [(ngModel)]="email" />
+        <p class="profile-error" *ngIf="emailError">{{ emailError }}</p>
+
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" type="tel" [(ngModel)]="phone" />
+        <p class="profile-error" *ngIf="phoneError">{{ phoneError }}</p>
+
+        <p class="profile-status" *ngIf="saveMessage">{{ saveMessage }}</p>
+        <p class="profile-error profile-error--block" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+        <div class="profile-actions">
+          <button type="submit" class="profile-btn profile-btn--primary">Save Changes</button>
+          <button type="button" class="profile-btn" (click)="logout()">Sign Out</button>
+        </div>
+      </form>
+    </article>
+  </div>
+</section>
