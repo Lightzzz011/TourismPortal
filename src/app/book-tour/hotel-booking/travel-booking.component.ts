@@ -160,7 +160,7 @@ export class HotelBooking {
     this.showResults = true;
     this.noResults = false;
 
-    this.http.post<any[]>('/api/flights/search', payload).subscribe({
+    this.http.post<any[]>('https://tourismportal-w5sk.onrender.com/api/flights/search', payload).subscribe({
       next: (data) => {
         if (data?.length) {
           this.filteredFlights = data; // silent replacement
@@ -194,7 +194,7 @@ export class HotelBooking {
     ];
     this.showResults = true;
 
-    this.http.post<any[]>('/api/buses/search', payload).subscribe({
+    this.http.post<any[]>('https://tourismportal-w5sk.onrender.com/api/buses/search', payload).subscribe({
       next: (data) => {
         if (data?.length) {
           this.filteredBuses = data;
@@ -227,7 +227,7 @@ export class HotelBooking {
     ];
     this.showResults = true;
 
-    this.http.post<any[]>('/api/hotels/search', payload).subscribe({
+    this.http.post<any[]>('https://tourismportal-w5sk.onrender.com/api/hotels/search', payload).subscribe({
       next: (data) => {
         if (data?.length) {
           this.filteredHotels = data;

@@ -28,7 +28,7 @@ const loadEnvFile = () => {
 
 loadEnvFile();
 
-const PORT = Number(process.env.MOCK_API_PORT || 3000);
+const PORT = process.env.PORT || process.env.MOCK_API_PORT || 3000;
 
 let bookingCounter = 1000;
 const bookings = [];

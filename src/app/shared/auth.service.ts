@@ -84,7 +84,7 @@ export class AuthService {
     try {
       const response = await firstValueFrom(
         this.http.post<{ success: boolean; message: string; previewOtp?: string }>(
-          '/api/auth/request-otp',
+          'https://tourismportal-w5sk.onrender.com/api/auth/request-otp',
           { email: normalizedEmail },
         ),
       );
@@ -108,7 +108,7 @@ export class AuthService {
     const normalizedEmail = email.trim().toLowerCase();
     try {
       const response = await firstValueFrom(
-        this.http.post<{ success: boolean; message: string }>('/api/auth/verify-otp', {
+        this.http.post<{ success: boolean; message: string }>('https://tourismportal-w5sk.onrender.com/api/auth/verify-otp', {
           email: normalizedEmail,
           otp: otp.trim(),
         }),

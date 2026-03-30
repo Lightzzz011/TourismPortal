@@ -36,8 +36,7 @@ export type BookingTestMode =
 
 @Injectable({ providedIn: 'root' })
 export class BookingRequestService {
-  private readonly baseUrl = '/api/bookings';
-
+private readonly baseUrl = 'https://tourismportal-w5sk.onrender.com/api/bookings';
   constructor(private http: HttpClient) {}
 
   submitBooking(
